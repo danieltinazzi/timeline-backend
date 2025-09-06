@@ -47,6 +47,13 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), request.getRequestURI());
     }
 
+    // Invalid credentials
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Map<String, String>> handleInvalidCredentials(InvalidCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "UNAUTHORIZED", "message", ex.getMessage()));
+    }
+
     // Helper method to build standard response
     private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String message, String path) {
         Map<String, Object> body = new HashMap<>();

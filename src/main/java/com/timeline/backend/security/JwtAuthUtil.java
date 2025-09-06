@@ -13,7 +13,7 @@ import java.util.Date;
  * Uses HMAC signing with a secret key defined in application.properties.
  */
 @Component
-public class JwtUtil {
+public class JwtAuthUtil {
 
     private final SecretKey key;
     private final long accessExpiration;
@@ -29,7 +29,7 @@ public class JwtUtil {
      * @param accessExpiration expiration time for access tokens (in ms)
      * @param refreshExpiration expiration time for refresh tokens (in ms)
      */
-    public JwtUtil(
+    public JwtAuthUtil(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.access.expiration}") long accessExpiration,
             @Value("${jwt.refresh.expiration}") long refreshExpiration

@@ -20,12 +20,12 @@ import java.io.IOException;
  * - If valid, sets authentication in Spring Security context
  */
 @Component
-public class JwtFilter extends OncePerRequestFilter {
+public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JwtAuthUtil jwtUtil;
 
-    public JwtFilter(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
+    public JwtAuthFilter(JwtAuthUtil jwtAuthUtil) {
+        this.jwtUtil = jwtAuthUtil;
     }
 
     @Override
