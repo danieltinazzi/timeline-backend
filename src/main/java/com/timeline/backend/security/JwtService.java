@@ -1,19 +1,21 @@
 package com.timeline.backend.security;
 
+import com.timeline.backend.user.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 /**
  * Utility class for generating, parsing, and validating JWT tokens.
  * Uses HMAC signing with a secret key defined in application.properties.
  */
-@Component
-public class JwtAuthUtil {
+@Service
+public class JwtService {
 
     private final SecretKey key;
     private final long accessExpiration;
@@ -23,18 +25,18 @@ public class JwtAuthUtil {
     private final String TYPE_REFRESH_TOKEN = "refresh";
 
     /**
-     * Initialize the JwtUtil with values from application.properties.
+     * Initialize the JwtService with values from application.properties.
      *
      * @param secret the secret key for signing tokens
      * @param accessExpiration expiration time for access tokens (in ms)
      * @param refreshExpiration expiration time for refresh tokens (in ms)
      */
-    public JwtAuthUtil(
+    public JwtService(
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.access.expiration}") long accessExpiration,
             @Value("${jwt.refresh.expiration}") long refreshExpiration
     ) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.accessExpiration = accessExpiration;
         this.refreshExpiration = refreshExpiration;
     }
@@ -77,18 +79,18 @@ public class JwtAuthUtil {
                 .getSubject();
     }
 
-    public boolean validateAccessToken(String token) {
-        return validateToken(token, TYPE_ACCESS_TOKEN);
+    public boolean isAccessTokenValid(String token) {
+        return isTokenValid(token, TYPE_ACCESS_TOKEN);
     }
 
-    public boolean validateRefreshToken(String token) {
-        return validateToken(token, TYPE_REFRESH_TOKEN);
+    public boolean isRefreshTokenValid(String token) {
+        return isTokenValid(token, TYPE_REFRESH_TOKEN);
     }
 
     /**
      * Validate token: checks token type, signature and expiration
      */
-    private boolean validateToken(String token, String expectedType) {
+    private boolean isTokenValid(String token, String expectedType) {
         try {
             var claims = Jwts.parser()
                     .verifyWith(key)

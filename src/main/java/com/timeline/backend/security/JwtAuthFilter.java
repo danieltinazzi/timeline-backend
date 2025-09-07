@@ -22,10 +22,10 @@ import java.io.IOException;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final JwtAuthUtil jwtUtil;
+    private final JwtService jwtService;
 
-    public JwtAuthFilter(JwtAuthUtil jwtAuthUtil) {
-        this.jwtUtil = jwtAuthUtil;
+    public JwtAuthFilter(JwtService jwtService) {
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -39,8 +39,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
 
-            if (jwtUtil.validateAccessToken(jwt)) {
-                String username = jwtUtil.extractUsername(jwt);
+            if (jwtService.isAccessTokenValid(jwt)) {
+                String username = jwtService.extractUsername(jwt);
 
                 // Create an authentication object
                 UsernamePasswordAuthenticationToken authToken =
