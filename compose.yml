@@ -3,8 +3,6 @@ name: timeline
 services:
   db:
     image: postgres:17.6
-    container_name: timeline-db
-    restart: always
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -16,8 +14,6 @@ services:
 
   backend:
     build: .
-    container_name: timeline-backend
-    restart: always
     depends_on:
       - db
     environment:
