@@ -1,4 +1,8 @@
 services:
+  db:
+    restart: always
+    ports: []
   backend:
+    restart: always
     environment:
-      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
