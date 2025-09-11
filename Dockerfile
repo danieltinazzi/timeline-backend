@@ -3,7 +3,7 @@ WORKDIR /app
 COPY build.gradle settings.gradle gradlew ./
 COPY gradle ./gradle
 RUN ./gradlew dependencies --no-daemon
-COPY . .
+COPY src ./src
 RUN ./gradlew clean build -x test --no-daemon
 
 FROM eclipse-temurin:21-jdk-jammy
