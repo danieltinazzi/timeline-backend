@@ -36,15 +36,7 @@ public class AuthController {
         String accessToken = jwtService.generateAccessToken(user.getUsername());
         String refreshToken = jwtService.generateRefreshToken(user.getUsername());
 
-        setRefreshTokenCookie(response, refreshToken);
-
-        return ResponseEntity.ok(new LoginResponse(accessToken));
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletResponse response) {
-        clearRefreshTokenCookie(response);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new LoginResponse(accessToken, refreshToken));
     }
 
     @PostMapping("/refresh")
@@ -57,35 +49,9 @@ public class AuthController {
             String newAccessToken = jwtService.generateAccessToken(username);
             String newRefreshToken = jwtService.generateRefreshToken(username);
 
-            setRefreshTokenCookie(response, newRefreshToken);
-
-            return ResponseEntity.ok(new LoginResponse(newAccessToken));
+            return ResponseEntity.ok(new LoginResponse(newAccessToken, newRefreshToken));
         } else {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
         }
-    }
-
-    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(true)
-                .secure(false)
-                .path("/api/auth/refresh")
-                .maxAge(Duration.ofDays(7))
-                .sameSite("Strict")
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-    }
-
-    private void clearRefreshTokenCookie(HttpServletResponse response) {
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
-                .httpOnly(true)
-                .secure(false)
-                .path("/api/auth/refresh")
-                .maxAge(0)
-                .sameSite("Strict")
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }
