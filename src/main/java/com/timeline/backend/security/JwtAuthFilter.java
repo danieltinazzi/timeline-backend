@@ -1,5 +1,6 @@
 package com.timeline.backend.security;
 
+import com.timeline.backend.exception.InvalidAccessTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -51,6 +52,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 // Store authentication in SecurityContext for this request
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                throw new InvalidAccessTokenException();
             }
         }
 

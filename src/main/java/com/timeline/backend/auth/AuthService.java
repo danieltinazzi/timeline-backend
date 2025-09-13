@@ -20,6 +20,6 @@ public class AuthService {
     public User authenticate(String username, String rawPassword) {
         return userRepository.findByUsername(username)
                 .filter(user -> passwordEncoder.matches(rawPassword, user.getPassword()))
-                .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
+                .orElseThrow(InvalidCredentialsException::new);
     }
 }

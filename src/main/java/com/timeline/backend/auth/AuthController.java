@@ -1,19 +1,16 @@
 package com.timeline.backend.auth;
 
+import com.timeline.backend.exception.InvalidRefreshTokenException;
 import com.timeline.backend.security.JwtService;
 import com.timeline.backend.user.User;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpHeaders;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.Duration;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,14 +19,17 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
 
-    public AuthController(AuthService authService, JwtService jwtService) {
+    public AuthController(
+            AuthService authService,
+            JwtService jwtService
+    ) {
         this.authService = authService;
         this.jwtService = jwtService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest,
-                                               HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> login(
+            @Valid @RequestBody LoginRequest loginRequest) {
 
         User user = authService.authenticate(loginRequest.username(), loginRequest.password());
 
@@ -40,8 +40,8 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<LoginResponse> refresh(@RequestBody RefreshRequest request,
-                                 HttpServletResponse response) {
+    public ResponseEntity<LoginResponse> refresh(
+            @Valid @RequestBody RefreshRequest request) {
         String refreshToken = request.refreshToken();
 
         if (jwtService.isRefreshTokenValid(refreshToken)) {
@@ -51,7 +51,7 @@ public class AuthController {
 
             return ResponseEntity.ok(new LoginResponse(newAccessToken, newRefreshToken));
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
+            throw new InvalidRefreshTokenException();
         }
     }
 }
