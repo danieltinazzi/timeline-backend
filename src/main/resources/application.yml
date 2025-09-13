@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: timeline-backend
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jackson:
+    serialization:
+      indent-output: true
+    default-property-inclusion: non_null
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  mvc:
+    throw-exception-if-no-handler-found: true
+  server:
+    port: 8080
+    error:
+      include-message: always
+      include-binding-errors: always
+      include-stacktrace: never
+  web:
+    resources:
+      add-mappings: false
+    encoding:
+      charset: UTF-8
+      force: true
+      force-request: true
+      force-response: true
+
+jwt:
+  secret: ${JWT_SECRET}
+  access:
+    expiration: 900000
+  refresh:
+    expiration: 604800000
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    hibernate:
+      ddl-auto: validate
