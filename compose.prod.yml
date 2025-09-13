@@ -1,0 +1,18 @@
+services:
+  db:
+    restart: always
+    ports: []
+
+  redis:
+    restart: always
+    ports: []
+
+  backend:
+    image: ghcr.io/danieltinazzi/timeline-backend/timeline-backend:latest
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+
+volumes:
+  redis_data:
+  postgres_data:
