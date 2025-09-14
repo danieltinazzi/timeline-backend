@@ -8,7 +8,7 @@ services:
     ports: []
 
   backend:
-    image: ghcr.io/danieltinazzi/timeline-backend/timeline-backend:latest
+    image: ghcr.io/danieltinazzi/timeline-backend/timeline-backend:main
     pull_policy: always
     restart: always
     environment:
