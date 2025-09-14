@@ -9,6 +9,7 @@ services:
 
   backend:
     image: ghcr.io/danieltinazzi/timeline-backend/timeline-backend:latest
+    pull_policy: always
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: prod
