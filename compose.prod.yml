@@ -8,7 +8,8 @@ services:
     ports: []
 
   backend:
-    image: ghcr.io/danieltinazzi/timeline-backend:main
+    image: ghcr.io/danieltinazzi/timeline-backend/timeline-backend:main
+    pull_policy: always
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: prod
