@@ -5,7 +5,6 @@ services:
 
   redis:
     restart: always
-    ports: []
 
   backend:
     image: ghcr.io/danieltinazzi/timeline-backend:main
