@@ -1,0 +1,10 @@
+.github/
+.gradle/
+.idea/
+build/
+.env
+.env.example
+.gitattributes
+.gitignore
+LICENSE
+README.md
