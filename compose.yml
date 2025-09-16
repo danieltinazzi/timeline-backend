@@ -14,8 +14,6 @@ services:
 
   redis:
     image: redis:8.2-bookworm
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
 
