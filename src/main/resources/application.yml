@@ -65,4 +65,6 @@ spring:
       on-profile: prod
   jpa:
     hibernate:
-      ddl-auto: validate
+      # TODO: change to "validate" once a migration tool is added
+      #ddl-auto: validate
+      ddl-auto: update
