@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TimelineBackendApplication {
+public class TimelineApp {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TimelineBackendApplication.class, args);
+		SpringApplication.run(TimelineApp.class, args);
 	}
 
 }
