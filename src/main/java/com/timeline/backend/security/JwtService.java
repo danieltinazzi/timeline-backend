@@ -1,9 +1,9 @@
 package com.timeline.backend.security;
 
-import com.timeline.backend.user.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -44,9 +44,9 @@ public class JwtService {
     /**
      * Generate a short-lived access token
      */
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(UserDetails userDetails) {
         return Jwts.builder()
-                .subject(username)
+                .subject(userDetails.getUsername())
                 .claim("token_type", TYPE_ACCESS_TOKEN)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessExpiration))
@@ -57,9 +57,9 @@ public class JwtService {
     /**
      * Generate a long-lived refresh token
      */
-    public String generateRefreshToken(String username) {
+    public String generateRefreshToken(UserDetails userDetails) {
         return Jwts.builder()
-                .subject(username)
+                .subject(userDetails.getUsername())
                 .claim("token_type", TYPE_REFRESH_TOKEN)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
@@ -79,18 +79,18 @@ public class JwtService {
                 .getSubject();
     }
 
-    public boolean isAccessTokenValid(String token) {
-        return isTokenValid(token, TYPE_ACCESS_TOKEN);
+    public boolean isAccessTokenValid(String token, UserDetails userDetails) {
+        return isTokenValid(token, userDetails, TYPE_ACCESS_TOKEN);
     }
 
-    public boolean isRefreshTokenValid(String token) {
-        return isTokenValid(token, TYPE_REFRESH_TOKEN);
+    public boolean isRefreshTokenValid(String token, UserDetails userDetails) {
+        return isTokenValid(token, userDetails, TYPE_REFRESH_TOKEN);
     }
 
     /**
-     * Validate token: checks token type, signature and expiration
+     * Validate token: checks username, token type, signature and expiration
      */
-    private boolean isTokenValid(String token, String expectedType) {
+    private boolean isTokenValid(String token, UserDetails userDetails, String expectedType) {
         try {
             var claims = Jwts.parser()
                     .verifyWith(key)
@@ -98,10 +98,13 @@ public class JwtService {
                     .parseSignedClaims(token)
                     .getPayload();
 
+            String username = claims.getSubject();
             String type = claims.get("token_type", String.class);
 
-            return expectedType.equals(type) &&
-                    claims.getExpiration().after(new Date());
+            return username.equals(userDetails.getUsername()) &&
+                userDetails.isEnabled() &&
+                expectedType.equals(type);
+
         } catch (Exception e) {
             return false;
         }

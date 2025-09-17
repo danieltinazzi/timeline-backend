@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,9 +26,11 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
-    public JwtAuthFilter(JwtService jwtService) {
+    public JwtAuthFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -39,19 +43,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
+            String username = jwtService.extractUsername(jwt);
 
-            if (jwtService.isAccessTokenValid(jwt)) {
-                String username = jwtService.extractUsername(jwt);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                if (jwtService.isAccessTokenValid(jwt, userDetails)) {
+                    // Create an authentication object
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
 
-                // Create an authentication object
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(username, null, null);
+                    // Attach request details (IP, session, etc.)
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                // Attach request details (IP, session, etc.)
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                // Store authentication in SecurityContext for this request
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    // Store authentication in SecurityContext for this request
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             } else {
                 throw new InvalidAccessTokenException();
             }

@@ -2,6 +2,7 @@ package com.timeline.backend.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,11 +43,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({
-            InvalidCredentialsException.class,
+            BadCredentialsException.class,
+            InvalidAccessTokenException.class,
             InvalidRefreshTokenException.class
     })
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleInvalidCredentials(
+    public ErrorResponse handleUnauthorized(
             RuntimeException ex,
             HttpServletRequest request) {
         return ErrorResponse.of(
