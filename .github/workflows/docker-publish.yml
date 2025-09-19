@@ -112,7 +112,7 @@ jobs:
             -o UserKnownHostsFile=/dev/null \
             -p $DROPLET_SSH_PORT \
             $DROPLET_USER@$DROPLET_IP "
-              cd /app &&
-              docker-compose pull &&
+              cd app &&
+              docker compose pull &&
               docker compose -f compose.yml -f compose.prod.yml up -d
             "
