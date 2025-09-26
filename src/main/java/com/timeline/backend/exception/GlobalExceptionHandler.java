@@ -2,12 +2,14 @@ package com.timeline.backend.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,42 +17,56 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NoHandlerFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFound(
-            NoHandlerFoundException ex,
-            HttpServletRequest request) {
-        return ErrorResponse.of(
-                HttpStatus.NOT_FOUND,
-                ex.getMessage(),
-                request.getRequestURI()
-        );
+    public ProblemDetail handleNotFound(HttpServletRequest request) {
+
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problem.setDetail("Handler not found");
+        problem.setInstance(URI.create(request.getRequestURI()));
+        return problem;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidation(
-            MethodArgumentNotValidException ex,
-            HttpServletRequest req) {
+    public ProblemDetail handleNotValid(
+            MethodArgumentNotValidException exception,
+            HttpServletRequest request) {
 
-        Map<String, String> validationErrors = new HashMap<>();
-        ex.getBindingResult()
+        Map<String, String> fieldErrors = new HashMap<>();
+        exception.getBindingResult()
                 .getFieldErrors()
-                .forEach(error -> validationErrors.put(
-                        error.getField(),
-                        error.getDefaultMessage()
+                .forEach(fieldError -> fieldErrors.put(
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage()
                 ));
-        return ErrorResponse.of(HttpStatus.BAD_REQUEST, "Validation failed", req.getRequestURI(), validationErrors);
+
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problem.setDetail("Request not valid");
+        problem.setInstance(URI.create(request.getRequestURI()));
+        problem.setProperty("errors", fieldErrors);
+        return problem;
     }
 
-    @ExceptionHandler({InvalidRefreshTokenException.class})
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse handleUnauthorized(
-            RuntimeException ex,
-            HttpServletRequest request) {
-        return ErrorResponse.of(
-                HttpStatus.UNAUTHORIZED,
-                ex.getMessage(),
-                request.getRequestURI()
-        );
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ProblemDetail handleInvalidRefreshToken(
+            HttpServletRequest request,
+            InvalidRefreshTokenException exception) {
+
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problem.setDetail(exception.getMessage());
+        problem.setInstance(URI.create(request.getRequestURI()));
+        return problem;
+    }
+
+    @ExceptionHandler({
+            UserNotFoundException.class,
+            UsernameNotFoundException.class
+    })
+    public ProblemDetail handleUserNotFound(
+            HttpServletRequest request,
+            Exception exception) {
+
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problem.setDetail(exception.getMessage());
+        problem.setInstance(URI.create(request.getRequestURI()));
+        return problem;
     }
 }
