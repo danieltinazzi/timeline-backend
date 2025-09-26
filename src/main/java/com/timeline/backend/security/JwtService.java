@@ -1,5 +1,6 @@
 package com.timeline.backend.security;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,12 +72,16 @@ public class JwtService {
      * Extract username (subject) from token
      */
     public String extractUsername(String token) {
-        return Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+        try {
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        } catch (JwtException e) {
+            return null;
+        }
     }
 
     public boolean isAccessTokenValid(String token, UserDetails userDetails) {
@@ -105,7 +110,7 @@ public class JwtService {
                 userDetails.isEnabled() &&
                 expectedType.equals(type);
 
-        } catch (Exception e) {
+        } catch (JwtException e) {
             return false;
         }
     }

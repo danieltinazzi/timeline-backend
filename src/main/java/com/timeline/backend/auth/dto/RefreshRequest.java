@@ -1,4 +1,4 @@
-package com.timeline.backend.auth;
+package com.timeline.backend.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

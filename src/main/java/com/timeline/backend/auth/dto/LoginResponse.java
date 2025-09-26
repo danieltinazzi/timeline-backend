@@ -1,4 +1,4 @@
-package com.timeline.backend.auth;
+package com.timeline.backend.auth.dto;
 
 public record LoginResponse(
         String accessToken,
