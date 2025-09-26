@@ -12,11 +12,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  redis:
-    image: redis:8.2-bookworm
-    volumes:
-      - redis_data:/data
-
   backend:
     build: .
     depends_on:
@@ -33,5 +28,4 @@ services:
       - "8080:8080"
 
 volumes:
-  redis_data:
   postgres_data:

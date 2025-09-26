@@ -9,7 +9,6 @@ The goal of this project is to combine modern backend architectures with the UI 
 
 - **Spring Boot** (Java 21)  
 - **PostgreSQL** (relational database)  
-- **Redis** (used for frontend session tokens)  
 - **Docker Compose V2** (simple orchestration)
 - **GitHub Actions** (auto-deploy on GHCR)  
 
@@ -26,14 +25,14 @@ The goal of this project is to combine modern backend architectures with the UI 
 
 ### Development Mode (local build)
 
-Builds and runs the containers (backend, Postgres, Redis) from source:
+Builds and runs the containers (backend, Postgres) from source:
 
 ```
 docker compose -f compose.yml up
 ```
 
 - Backend available at `http://localhost:8080`  
-- Postgres and Redis run as supporting services
+- Postgres as a docker container
 
 ### Production Mode (pre-built images)
 

@@ -3,9 +3,6 @@ services:
     restart: always
     ports: []
 
-  redis:
-    restart: always
-
   backend:
     image: ghcr.io/danieltinazzi/timeline-backend:main
     pull_policy: always
