@@ -1,6 +1,7 @@
 package com.timeline.backend.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,9 +21,11 @@ public class User implements UserDetails {
     private UUID id;
 
     @Column(unique = true, nullable = false)
+    @NotBlank
     private String username;
 
     @Column(nullable = false)
+    @NotBlank
     private String password;
 
     @Column(nullable = false)
