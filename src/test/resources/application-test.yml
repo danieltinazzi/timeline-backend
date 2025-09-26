@@ -1,0 +1,3 @@
+test:
+  username: ${TIMELINE_ADMIN_USER}
+  password: ${TIMELINE_ADMIN_PASSWORD}
