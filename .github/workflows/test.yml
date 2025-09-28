@@ -10,11 +10,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_HOST: ${{ vars.POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
+      POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+      POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      TIMELINE_ADMIN_USER: ${{ vars.TIMELINE_ADMIN_USER }}
+      TIMELINE_ADMIN_PASSWORD: ${{ secrets.TIMELINE_ADMIN_PASSWORD }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Start DB and wait
+      - name: Start DB
         run: |
           docker compose -f compose.yml up -d db
           CONTAINER=$(docker compose -f compose.yml ps -q db)
@@ -47,13 +56,4 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run integration tests
-        env:
-          POSTGRES_HOST: ${{ vars.POSTGRES_HOST }}
-          POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
-          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
-          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          TIMELINE_ADMIN_USER: ${{ vars.TIMELINE_ADMIN_USER }}
-          TIMELINE_ADMIN_PASSWORD: ${{ secrets.TIMELINE_ADMIN_PASSWORD }}
         run: ./gradlew clean test
