@@ -1,4 +1,4 @@
-name: Docker
+name: Publish
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -103,13 +103,20 @@ jobs:
           DROPLET_SSH_PORT: ${{ vars.DROPLET_SSH_PORT }}
         run: |
           mkdir -p ~/.ssh
-          echo "$DROPLET_PRIVATE_SSH_KEY" > ~/.ssh/id_rsa
+          echo "${DROPLET_PRIVATE_SSH_KEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+
+          scp -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            -P ${DROPLET_SSH_PORT} \
+            compose.yml \
+            compose.prod.yml \
+            ${DROPLET_USER}@${DROPLET_IP}:~/app/
           
           ssh -o StrictHostKeyChecking=no \
             -o UserKnownHostsFile=/dev/null \
-            -p $DROPLET_SSH_PORT \
-            $DROPLET_USER@$DROPLET_IP "
+            -p ${DROPLET_SSH_PORT} \
+            ${DROPLET_USER}@${DROPLET_IP} "
               cd app &&
               docker compose pull &&
               docker compose -f compose.yml -f compose.prod.yml up -d
