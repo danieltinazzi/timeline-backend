@@ -19,6 +19,7 @@ jobs:
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       TIMELINE_ADMIN_USER: ${{ vars.TIMELINE_ADMIN_USER }}
       TIMELINE_ADMIN_PASSWORD: ${{ secrets.TIMELINE_ADMIN_PASSWORD }}
+      SPRING_PROFILES_ACTIVE: dev
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -56,7 +57,4 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run integration tests
-        run: |
-          echo -n "$JWT_SECRET" | wc -c
-          echo -n "$JWT_SECRET" | base64 --decode 2>/dev/null | wc -c
-          ./gradlew clean test --no-daemon --stacktrace --info
+        run: ./gradlew clean test --no-daemon --stacktrace
