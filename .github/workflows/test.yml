@@ -40,8 +40,8 @@ jobs:
           POSTGRES_PORT: ${{ vars.POSTGRES_PORT }}
           POSTGRES_DB: ${{ vars.POSTGRES_DB }}
           POSTGRES_USER: ${{ vars.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
-          JWT_SECRET: ${{ vars.JWT_SECRET }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
           TIMELINE_ADMIN_USER: ${{ vars.TIMELINE_ADMIN_USER }}
-          TIMELINE_ADMIN_PASSWORD: ${{ vars.TIMELINE_ADMIN_PASSWORD }}
-        run: ./gradlew clean test --no-daemon --stacktrace --info
+          TIMELINE_ADMIN_PASSWORD: ${{ secrets.TIMELINE_ADMIN_PASSWORD }}
+        run: ./gradlew clean test
