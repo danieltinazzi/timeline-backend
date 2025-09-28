@@ -1,3 +1,11 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  jpa:
+    hibernate:
+      ddl-auto: update
+
 test:
   username: ${TIMELINE_ADMIN_USER}
   password: ${TIMELINE_ADMIN_PASSWORD}
