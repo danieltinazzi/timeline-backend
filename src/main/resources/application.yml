@@ -49,8 +49,8 @@ logging:
 
 app:
   admin:
-    username: ${TIMELINE_ADMIN_USER}
-    password: ${TIMELINE_ADMIN_PASSWORD}
+    username: ${ADMIN_USER}
+    password: ${ADMIN_PASSWORD}
 
 ---
 
@@ -71,5 +71,4 @@ spring:
   jpa:
     hibernate:
       # TODO: change to "validate" once a migration tool is added
-      #ddl-auto: validate
       ddl-auto: update
