@@ -44,4 +44,11 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           TIMELINE_ADMIN_USER: ${{ vars.TIMELINE_ADMIN_USER }}
           TIMELINE_ADMIN_PASSWORD: ${{ secrets.TIMELINE_ADMIN_PASSWORD }}
-        run: ./gradlew clean test
+        run: |
+          echo "Checking env variables:"
+          echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD:+present}"
+          echo "JWT_SECRET=${JWT_SECRET:+present}"
+          echo "TIMELINE_ADMIN_PASSWORD=${TIMELINE_ADMIN_PASSWORD:+present}"
+          echo "Starting Gradle..."
+          ./gradlew clean test
+        shell: bash
