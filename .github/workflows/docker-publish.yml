@@ -6,11 +6,6 @@ name: Docker
 # documentation.
 
 on:
-  push:
-    branches: [ "main" ]
-    tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "main" ]
   workflow_run:
     workflows: ["Test"]
     types:
